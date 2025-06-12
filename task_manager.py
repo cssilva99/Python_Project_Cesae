@@ -5,58 +5,21 @@ user_tasks = {}
 username = ""
 password = ""
 
-#=====lamda functions===========
-# def lambda_handler(event,context):
-#      data = client.scan(TableName = "Tasks")
-#      return {
-#           'statusCode' : 200,
-#           'body' : json.dumps(data)
-#      }
-
-# def lambda_handler(event,context):
-#      data = client.scan(TableName = "Credentials")
-#      return {
-#           'statusCode' : 200,
-#           'body' : json.dumps(data)
-#      }
+#=====Authentication===========
 
 def get_credentials():
-    user_credentials = {
+    all_credentials = {
         "claudia" : "passwd1",
         "felippe" : "passwd2"
     }
-
-def get_all_tasks():
-    all_users_tasks = {
-        {
-            "assigned_username" : "felippe",
-            "task_title" : "",
-            "task_description" : "",
-            "task_due_date" : "",
-            "assigned_date" : ""
-        },
-        {
-            "assigned_username" : "claudia",
-            "task_title" : "",
-            "task_description" : "",
-            "task_due_date" : "",
-            "assigned_date" : ""
-        },
-    }
-
-def get_user_tasks():
-        my_tasks = {
-            "assigned_username" : "",
-            "task_title" : "",
-            "task_description" : "",
-            "task_due_date" : "",
-            "assigned_date" : ""        
-        }
+    return all_credentials
 
 def authenticate():
     username = input("Username: ")
     password = input("Password: ")
 
+    user_credentials = get_credentials()
+    
     if username in user_credentials and user_credentials[username] == password:
         print("Login válido!")
     else:
@@ -67,6 +30,29 @@ def authenticate():
 def register_user():
     pass
 
+#=====DynamoDB Connection===========
+def connect_to_dynamodb():
+     data = client.scan(TableName = "Tasks")
+     return data
+
+#=====Tasks CRUD===========
+
+def view_all_tasks():
+    with open('tasks_dynamodb_import.json', 'r') as file:
+        for line in jsonfile:
+                task = line.strip().split(", ")
+                #This line is to split the line where there is a comma to make the task information more readable
+                print(f"Assigned to: {task[0]}")
+                print(f"Title: {task[1]}")
+                print(f"Description: {task[2]}")
+                print(f"Due Date: {task[3]}")
+                print(f"Assigned Date: {task[4]}")
+                print(f"Status: {task[5]}")
+                print()
+                  
+def get_user_tasks():
+    pass
+
 def add_task():
     user_tasks["assigned_username"] = input("You can now assign tasks, please enter the username of the person you would like to assign tasks to: ")
     user_tasks["task_title"] = input("Please enter the title of the task: ")
@@ -75,30 +61,8 @@ def add_task():
     user_tasks["assigned_date"] = input("Please enter the date today in the format dd/mm/yyyy:")
 
 
-def view_all_tasks():
-    all_tasks = get_all_tasks()
-    # all_tasks = line.strip().split(", ")
-    for task in all_tasks:        
-        print(f"Assigned to: {task[0]}")
-        print(f"Title: {task[1]}")
-        print(f"Description: {task[2]}")
-        print(f"Due Date: {task[3]}")
-        print(f"Assigned Date: {task[4]}")
-        print(f"Status: {task[5]}")
-        print()
-
-
 def view_my_tasks():
-    tasks = get_user_tasks()
-    # my_tasks = line.strip().split(", ")
-    for task in tasks:    
-        if task[0] == username:
-            print(f"Title: {task[1]}")
-            print(f"Description: {task[2]}")
-            print(f"Due Date: {task[3]}")
-            print(f"Assigned Date: {task[4]}")
-            print(f"Status: {task[5]}")
-            print()
+    pass
             
 def store_to_dynamodb():
      pass
@@ -132,5 +96,6 @@ def main():
             exit()
         else:
             print("You have entered an invalid input. Please try again")
-
+            
+            
 main()
